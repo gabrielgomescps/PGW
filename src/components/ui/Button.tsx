@@ -15,7 +15,7 @@ interface Props {
 }
 
 const ESTILOS = {
-  primaria: 'bg-turquesa text-navy hover:shadow-turquesa/40',
+  primaria: 'bg-turquesa text-navy hover:shadow-[0_12px_34px_-10px_var(--color-turquesa)]',
   secundaria: 'border-2 border-white/40 text-white hover:border-turquesa hover:text-turquesa',
 } as const
 
