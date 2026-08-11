@@ -14,10 +14,15 @@ interface Props {
   className?: string
 }
 
-// A sombra do hover precisa ser valor arbitrario: em Tailwind v4 o
-// modificador de opacidade `shadow-turquesa/40` nao gera CSS nenhum, e o
-// `shadow-turquesa` puro so define --tw-shadow-color, sem desenhar sombra.
-// Underscores no lugar de espacos, e a cor vem da variavel da paleta.
+// A sombra do hover precisa ser valor arbitrario. Em Tailwind v4 as duas
+// formas semanticas obvias falham: com modificador de opacidade nao gera
+// CSS nenhum, e sem ele so define --tw-shadow-color sem desenhar sombra.
+// Nao simplifique esta classe de volta. Underscores no lugar de espacos,
+// e a cor vem da variavel da paleta.
+//
+// O texto acima evita de proposito escrever a classe quebrada por extenso:
+// o scanner do Tailwind le o arquivo cru e nao distingue comentario de
+// codigo, entao mencionar a classe a regeneraria no bundle.
 const ESTILOS = {
   primaria: 'bg-turquesa text-navy hover:shadow-[0_12px_34px_-10px_var(--color-turquesa)]',
   secundaria: 'border-2 border-white/40 text-white hover:border-turquesa hover:text-turquesa',
