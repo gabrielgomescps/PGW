@@ -28,7 +28,11 @@ Estas restrições vieram da inspeção dos arquivos e alteraram decisões do br
 
 ## Stack
 
-Vite · React 18 · TypeScript · React Router v7 · Tailwind CSS · Framer Motion. Deploy na Vercel. `sharp` em devDependencies apenas para o script de otimização de imagens.
+Vite · **React 19** · TypeScript · React Router v7 · **Tailwind CSS v4** · Framer Motion. Deploy na Vercel. `sharp` em devDependencies apenas para o script de otimização de imagens.
+
+*Duas divergências do brief original, decididas com o cliente após verificar as versões publicadas:*
+- *O brief pedia Tailwind v3 com `npx tailwindcss init -p`. Esse comando **foi removido na v4** e a sequência do brief falharia. Adotada a v4 com `@tailwindcss/vite`: sem `postcss.config`, paleta declarada em CSS via `@theme`. As classes escritas no JSX não mudam.*
+- *O brief pedia React 18, mas o template do Vite scaffolda React 19 e ficar no 18 exigiria downgrade explícito de `react`, `react-dom` e dos `@types`. Adotado React 19, que hasteia `<title>` e `<meta>` nativamente — o hook `useSeo` previsto antes deixa de existir e cada página declara suas tags direto no JSX.*
 
 ## Identidade visual
 
@@ -67,7 +71,7 @@ D:\Claude\PGW\
 │  │  ├─ Logo.tsx · WhatsAppFab.tsx
 │  │  └─ home/    Hero · Comparison · Differentials · Gallery · TrustBadges · FinalCta
 │  ├─ pages/      Home · Servicos · Sobre · Contato · NotFound
-│  ├─ hooks/      useSeo · usePrefersReducedMotion
+│  ├─ hooks/      usePrefersReducedMotion
 │  └─ lib/        whatsapp.ts
 └─ vercel.json
 ```
@@ -86,7 +90,7 @@ D:\Claude\PGW\
 
 **`hooks/usePrefersReducedMotion.ts`** — lê `matchMedia('(prefers-reduced-motion: reduce)')` e reage a mudanças. Consumido por `Hero`, `Reveal` e `WhatsAppFab`.
 
-**`hooks/useSeo.ts`** — define `document.title` e a meta description por página.
+**Metadados por página** — com React 19 cada página renderiza `<title>` e `<meta name="description">` diretamente no seu JSX; o React os hasteia para o `<head>`. Nenhum hook e nenhuma manipulação manual de `document.head`.
 
 ## Hero
 
@@ -174,7 +178,7 @@ Todas desligadas sob `prefers-reduced-motion`.
 
 **Solução:**
 - `og:title`, `og:description`, `og:image` e `twitter:card` ficam **estáticos no `index.html`** — são os mesmos para o site inteiro.
-- `<title>` e meta description por página vão pelo hook `useSeo`, suficiente para o Google, que executa JS.
+- `<title>` e meta description por página são declarados no JSX de cada página e hasteados pelo React 19 — suficiente para o Google, que executa JS.
 - `public/og.jpg` gerado a partir de `piscina2` com o wordmark aplicado, 1200×630.
 
 Meta tags focadas em "limpeza de piscina Campinas" e "manutenção de piscina Campinas SP". `robots.txt` e `sitemap.xml` estáticos com as 4 rotas.
