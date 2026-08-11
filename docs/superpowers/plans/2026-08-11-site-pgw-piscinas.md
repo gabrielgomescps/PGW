@@ -1094,7 +1094,7 @@ Escrever `src/components/layout/RootLayout.tsx`. Sem o `useEffect` de scroll, na
 
 ```tsx
 import { useEffect } from 'react'
-import { Outlet, useLocation } from 'react-router-dom'
+import { useLocation, useOutlet } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Header } from './Header'
 import { Footer } from './Footer'
@@ -1102,6 +1102,12 @@ import { WhatsAppFab } from '../WhatsAppFab'
 
 export function RootLayout() {
   const location = useLocation()
+  // useOutlet e nao <Outlet />: o Outlet assina o contexto do router e
+  // re-renderiza com a rota nova na hora, por dentro do AnimatePresence.
+  // O conteudo trocaria em ~10ms e o fade de 200ms animaria uma div cujo
+  // conteudo ja mudou. Capturar o elemento aqui e o que faz a saida
+  // esperar de verdade.
+  const outlet = useOutlet()
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -1119,7 +1125,7 @@ export function RootLayout() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
           >
-            <Outlet />
+            {outlet}
           </motion.div>
         </AnimatePresence>
       </main>
