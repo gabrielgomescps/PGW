@@ -791,8 +791,12 @@ interface Props {
   className?: string
 }
 
+// A sombra do hover precisa ser valor arbitrario: em Tailwind v4 o
+// modificador de opacidade `shadow-turquesa/40` nao gera CSS nenhum, e o
+// `shadow-turquesa` puro so define --tw-shadow-color, sem desenhar sombra.
+// Underscores no lugar de espacos, e a cor vem da variavel da paleta.
 const ESTILOS = {
-  primaria: 'bg-turquesa text-navy hover:shadow-turquesa/40',
+  primaria: 'bg-turquesa text-navy hover:shadow-[0_12px_34px_-10px_var(--color-turquesa)]',
   secundaria: 'border-2 border-white/40 text-white hover:border-turquesa hover:text-turquesa',
 } as const
 
