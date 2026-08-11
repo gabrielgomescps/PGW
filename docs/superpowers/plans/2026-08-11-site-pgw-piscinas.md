@@ -543,7 +543,7 @@ git commit -m "Adiciona conteudo do site como fonte unica de verdade"
 
 **Interfaces:**
 - Consumes: os slugs e larguras nativas de `site.fotos` (Task 3)
-- Produces: para cada slug, os arquivos `public/images/<slug>-640.webp`, `-900.webp` e, quando a largura nativa permitir, `-1280.webp`. Consumidos pelas Tasks 7 e 8.
+- Produces: para cada slug, os arquivos `public/images/<slug>-640.webp`, `-900.webp` e, quando a largura nativa permitir, `-1200.webp`. Consumidos pelas Tasks 7 e 8.
 
 - [ ] **Step 1: Mover os JPGs de origem para fora da raiz**
 
@@ -563,7 +563,9 @@ import sharp from 'sharp'
 
 const ORIGEM = 'assets-origem'
 const SAIDA = 'public/images'
-const LARGURAS = [640, 900, 1280]
+// 1200 e a largura nativa de piscina1/piscina2. Um tier acima disso seria
+// descartado pela guarda anti-upscale e nunca geraria arquivo.
+const LARGURAS = [640, 900, 1200]
 
 // Os crops removem elementos que atrapalham a leitura da foto.
 // top/height sao em pixels da imagem original.
@@ -578,7 +580,7 @@ const FOTOS = [
     arquivo: 'piscina1.jpg',
     slug: 'piscina-azulejo-verde',
     larguraNativa: 1200,
-    crop: { left: 0, top: 430, width: 1200, height: 1170 }, // remove a capa azul no deck
+    crop: { left: 0, top: 540, width: 1200, height: 1060 }, // remove a capa azul no deck
   },
   {
     arquivo: 'piscina3.jpg',
@@ -724,7 +726,9 @@ O hero e a galeria servem os mesmos WebP em resoluções diferentes. A regra de 
 Escrever `src/lib/imagens.ts`:
 
 ```ts
-const LARGURAS = [640, 900, 1280]
+// Precisa espelhar LARGURAS de scripts/optimize-images.mjs: sao os
+// arquivos que existem em public/images.
+const LARGURAS = [640, 900, 1200]
 
 /** Monta o srcset de uma foto, sem oferecer largura acima da nativa. */
 export function srcSetDe(slug: string, larguraNativa: number): string {
