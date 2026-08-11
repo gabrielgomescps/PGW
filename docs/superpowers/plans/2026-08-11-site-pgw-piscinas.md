@@ -19,7 +19,7 @@ Estes valores valem para **todas** as tarefas. Copiados literalmente da spec.
 - **React 19:** `<title>` e `<meta name="description">` são declarados no JSX de cada página e hasteados pelo React. Não criar hook de SEO nem manipular `document.head`.
 - **Reduced motion:** toda animação decorativa (Ken Burns, pulse, slide-up) deve ser desligada quando `prefers-reduced-motion: reduce` estiver ativo. Sempre via o hook `usePrefersReducedMotion`.
 - **Conteúdo proibido:** nenhum depoimento de cliente (não existem reais). Nenhum preço. Nenhuma menção a "abertura e fechamento sazonal".
-- **Idioma:** todo texto visível em português do Brasil. Código, nomes de arquivo e mensagens de commit também em português, sem acento nos identificadores.
+- **Idioma:** todo texto visível ao usuário em português do Brasil, com acentuação correta. Mensagens de commit em português, sem acento. No código a convenção é mista e deliberada: **nomes de componente, arquivo e hook em inglês** (`Hero`, `Gallery`, `TrustBadges`, `usePrefersReducedMotion`), seguindo a convenção do ecossistema React; **dados de domínio e variáveis locais em português sem acento** (`servicos`, `selos`, `comparacao`, `reduzido`, `indice`). Seguir exatamente os identificadores que aparecem no código de cada tarefa.
 - **Imagens:** as 4 fotos de origem são verticais. Nunca esticar nem fazer upscale acima da largura nativa (1200px para piscina1/2, 900px para piscina3/4).
 
 ---
