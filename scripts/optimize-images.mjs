@@ -3,7 +3,9 @@ import sharp from 'sharp'
 
 const ORIGEM = 'assets-origem'
 const SAIDA = 'public/images'
-const LARGURAS = [640, 900, 1280]
+// 1200 e a largura nativa de piscina1/piscina2. Um tier acima disso seria
+// descartado pela guarda anti-upscale e nunca geraria arquivo.
+const LARGURAS = [640, 900, 1200]
 
 // Os crops removem elementos que atrapalham a leitura da foto.
 // top/height sao em pixels da imagem original.
