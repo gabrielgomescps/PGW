@@ -14,7 +14,7 @@ Estes valores valem para **todas** as tarefas. Copiados literalmente da spec.
 
 - **Paleta, exata:** navy `#0B2545`, turquesa `#17C3E0`, branco `#FFFFFF`, prata `#C9D6DF`. Nenhuma outra cor de marca.
 - **Tipografia:** Inter, via Google Fonts com `preconnect` e `display=swap`. Títulos 600/700, corpo 400.
-- **WhatsApp:** número `5519992715025`. Telefone exibido: `(19) 99271-5025`. Nunca escrever esse número como literal fora de `src/content/site.ts`.
+- **WhatsApp:** número `5519992715025`. Telefone exibido: `(19) 99271-5025`. Em **código de produção** o número existe apenas como `WHATSAPP_NUMERO` em `src/lib/whatsapp.ts`, lido a partir dali por `src/content/site.ts`; nenhum componente ou página pode conter o número como literal. **Arquivos de teste são exceção explícita:** eles pinam o valor esperado à mão, de propósito. Montar a URL esperada a partir da própria constante tornaria o teste tautológico — trocar `WHATSAPP_NUMERO` por um número errado continuaria passando, e o site inteiro apontaria para o telefone errado sem nenhum teste falhar.
 - **Tailwind v4:** paleta declarada em CSS via `@theme`. **Não** existe `tailwind.config.js` nem `postcss.config.js` neste projeto. Não rodar `npx tailwindcss init`, que foi removido na v4.
 - **React 19:** `<title>` e `<meta name="description">` são declarados no JSX de cada página e hasteados pelo React. Não criar hook de SEO nem manipular `document.head`.
 - **Reduced motion:** toda animação decorativa (Ken Burns, pulse, slide-up) deve ser desligada quando `prefers-reduced-motion: reduce` estiver ativo. Sempre via o hook `usePrefersReducedMotion`.
@@ -376,6 +376,8 @@ Centraliza todo o texto e todo dado de negócio. Nenhum outro arquivo pode conte
 Escrever `src/content/site.ts`:
 
 ```ts
+import { WHATSAPP_NUMERO } from '../lib/whatsapp'
+
 export interface Servico {
   slug: string
   titulo: string
@@ -405,7 +407,8 @@ export interface Foto {
 export const site = {
   nome: 'PGW Piscinas',
   telefoneExibido: '(19) 99271-5025',
-  telefoneHref: 'tel:+5519992715025',
+  // Derivado da constante, e nao literal: o numero existe num lugar so.
+  telefoneHref: `tel:+${WHATSAPP_NUMERO}`,
   regiao: 'Campinas e região',
 
   servicos: [
