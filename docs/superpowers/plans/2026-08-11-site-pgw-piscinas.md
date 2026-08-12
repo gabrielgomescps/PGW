@@ -1922,7 +1922,7 @@ export default function Contato() {
               <h2 className="text-sm font-bold uppercase tracking-widest text-turquesa">Telefone</h2>
               <a
                 href={site.telefoneHref}
-                className="mt-2 block text-2xl font-bold hover:text-turquesa"
+                className="mt-2 block text-2xl font-bold underline-offset-4 hover:underline"
               >
                 {site.telefoneExibido}
               </a>
@@ -1955,7 +1955,7 @@ export default function Contato() {
               </label>
               <button
                 type="submit"
-                className="mt-7 w-full rounded-full bg-turquesa px-8 py-4 font-semibold text-navy transition-transform hover:scale-[1.02]"
+                className="mt-7 w-full rounded-full bg-navy px-8 py-4 font-semibold text-white transition-transform hover:scale-[1.02]"
               >
                 Abrir conversa no WhatsApp
               </button>
