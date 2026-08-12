@@ -9,7 +9,7 @@ interface Props {
   as?: 'whatsapp' | 'link'
   href?: string
   mensagem?: string
-  variante?: 'primaria' | 'secundaria'
+  variante?: 'primaria' | 'secundaria' | 'inversa'
   pulse?: boolean
   className?: string
 }
@@ -26,6 +26,11 @@ interface Props {
 const ESTILOS = {
   primaria: 'bg-turquesa text-navy hover:shadow-[0_12px_34px_-10px_var(--color-turquesa)]',
   secundaria: 'border-2 border-white/40 text-white hover:border-turquesa hover:text-turquesa',
+  // Para secoes de fundo claro ou turquesa, onde a primaria sumiria.
+  // Precisa ser variante e nao className: o Tailwind resolve conflito de
+  // mesma especificidade pela ordem das regras no CSS compilado, entao
+  // passar uma cor de fundo por className nao sobrescreve a da variante.
+  inversa: 'bg-navy text-white hover:shadow-[0_12px_34px_-10px_var(--color-navy)]',
 } as const
 
 export function Button({

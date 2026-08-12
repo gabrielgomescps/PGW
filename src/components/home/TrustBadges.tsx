@@ -5,6 +5,9 @@ import { Section } from '../ui/Section'
 export function TrustBadges() {
   return (
     <Section className="bg-navy text-white">
+      <Reveal className="mx-auto mb-12 max-w-2xl text-center">
+        <h2 className="text-3xl font-bold sm:text-4xl">Como a PGW trabalha</h2>
+      </Reveal>
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {site.selos.map((selo, i) => (
           <Reveal key={selo.titulo} delay={i * 0.08}>

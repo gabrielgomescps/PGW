@@ -12,10 +12,7 @@ export function FinalCta() {
           Chame no WhatsApp e receba um orçamento para a sua piscina. Atendemos {site.regiao}.
         </p>
         <div className="mt-9 flex justify-center">
-          <Button
-            mensagem="Olá, PGW! Vim pelo site e quero um orçamento."
-            className="bg-navy text-white"
-          >
+          <Button variante="inversa" mensagem="Olá, PGW! Vim pelo site e quero um orçamento.">
             Falar com a PGW no WhatsApp
           </Button>
         </div>

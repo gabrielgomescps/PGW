@@ -14,7 +14,7 @@ export function Comparison() {
 
       <div className="mt-14 grid gap-6 md:grid-cols-2">
         <Reveal className="rounded-2xl border border-prata bg-prata/20 p-8">
-          <h3 className="text-lg font-bold uppercase tracking-wide text-navy/50">Sem a PGW</h3>
+          <h3 className="text-lg font-bold uppercase tracking-wide text-navy/70">Sem a PGW</h3>
           <ul className="mt-6 space-y-5">
             {site.comparacao.map((par) => (
               <li key={par.sem} className="flex gap-3 text-navy/70">
