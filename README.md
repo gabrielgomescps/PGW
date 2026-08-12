@@ -28,8 +28,9 @@ o número em nenhum outro arquivo.
 
 - Preencher os nomes dos sócios em `src/pages/Sobre.tsx` (há um bloco marcado
   visivelmente na página)
-- Trocar `pgwpiscinas.com.br` pelo domínio real em `public/robots.txt` e
-  `public/sitemap.xml`, e usar URL absoluta em `og:image` no `index.html`
+- Trocar `pgwpiscinas.com.br` pelo domínio real nos três lugares onde ele é
+  placeholder: `public/robots.txt`, `public/sitemap.xml` e as tags
+  `og:image` / `og:url` em `index.html`
 - Corrigir a grafia `MANUTENÇÃÓ` na arte impressa da logo (não afeta o site)
 
 ## Deploy

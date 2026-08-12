@@ -24,7 +24,7 @@ export default function Contato() {
   }
 
   const classeCampo =
-    'mt-2 w-full rounded-lg border border-prata px-4 py-3 outline-none focus:border-turquesa'
+    'mt-2 w-full rounded-lg border border-prata px-4 py-3 focus:border-turquesa focus:outline-2 focus:outline-offset-2 focus:outline-navy'
 
   return (
     <>
@@ -53,7 +53,7 @@ export default function Contato() {
         <div className="grid gap-12 lg:grid-cols-2">
           <Reveal className="space-y-8">
             <div>
-              <h2 className="text-sm font-bold uppercase tracking-widest text-turquesa">Telefone</h2>
+              <h2 className="text-sm font-bold uppercase tracking-widest text-navy/70">Telefone</h2>
               <a
                 href={site.telefoneHref}
                 className="mt-2 block text-2xl font-bold underline-offset-4 hover:underline"
@@ -62,7 +62,7 @@ export default function Contato() {
               </a>
             </div>
             <div>
-              <h2 className="text-sm font-bold uppercase tracking-widest text-turquesa">
+              <h2 className="text-sm font-bold uppercase tracking-widest text-navy/70">
                 Área de atuação
               </h2>
               <p className="mt-2 text-lg">{site.regiao}</p>

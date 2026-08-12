@@ -42,7 +42,7 @@ export default function Sobre() {
 
           <Reveal delay={0.12}>
             <div className="rounded-2xl border-2 border-dashed border-turquesa bg-turquesa/5 p-8">
-              <p className="text-xs font-bold uppercase tracking-widest text-turquesa">
+              <p className="text-xs font-bold uppercase tracking-widest text-navy/70">
                 Pendente antes de publicar
               </p>
               <h2 className="mt-4 text-2xl font-bold">Quem está por trás da PGW</h2>

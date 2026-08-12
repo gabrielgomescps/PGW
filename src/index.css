@@ -21,4 +21,8 @@ body {
   html {
     scroll-behavior: auto;
   }
+
+  .transition-transform {
+    transition: none;
+  }
 }

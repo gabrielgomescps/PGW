@@ -25,10 +25,10 @@ export function RootLayout() {
     <div className="flex min-h-screen flex-col">
       <Header />
       <main className="flex-1">
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={location.pathname}
-            initial={{ opacity: 0 }}
+            initial={reduzido ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: reduzido ? 0 : 0.2 }}
