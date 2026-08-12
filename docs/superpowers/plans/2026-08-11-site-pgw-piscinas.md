@@ -786,7 +786,7 @@ interface Props {
   as?: 'whatsapp' | 'link'
   href?: string
   mensagem?: string
-  variante?: 'primaria' | 'secundaria'
+  variante?: 'primaria' | 'secundaria' | 'inversa'
   pulse?: boolean
   className?: string
 }
@@ -803,6 +803,11 @@ interface Props {
 const ESTILOS = {
   primaria: 'bg-turquesa text-navy hover:shadow-[0_12px_34px_-10px_var(--color-turquesa)]',
   secundaria: 'border-2 border-white/40 text-white hover:border-turquesa hover:text-turquesa',
+  // Para secoes de fundo claro ou turquesa, onde a primaria sumiria.
+  // Precisa ser variante e nao className: o Tailwind resolve conflito de
+  // mesma especificidade pela ordem das regras no CSS compilado, entao
+  // passar uma cor de fundo por className nao sobrescreve a da variante.
+  inversa: 'bg-navy text-white hover:shadow-[0_12px_34px_-10px_var(--color-navy)]',
 } as const
 
 export function Button({
@@ -1511,7 +1516,7 @@ export function Comparison() {
 
       <div className="mt-14 grid gap-6 md:grid-cols-2">
         <Reveal className="rounded-2xl border border-prata bg-prata/20 p-8">
-          <h3 className="text-lg font-bold uppercase tracking-wide text-navy/50">Sem a PGW</h3>
+          <h3 className="text-lg font-bold uppercase tracking-wide text-navy/70">Sem a PGW</h3>
           <ul className="mt-6 space-y-5">
             {site.comparacao.map((par) => (
               <li key={par.sem} className="flex gap-3 text-navy/70">
@@ -1624,6 +1629,10 @@ import { Section } from '../ui/Section'
 export function TrustBadges() {
   return (
     <Section className="bg-navy text-white">
+      <Reveal className="mx-auto mb-12 max-w-2xl text-center">
+        <h2 className="text-3xl font-bold sm:text-4xl">Como a PGW trabalha</h2>
+      </Reveal>
+
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {site.selos.map((selo, i) => (
           <Reveal key={selo.titulo} delay={i * 0.08}>
@@ -1660,10 +1669,7 @@ export function FinalCta() {
           Chame no WhatsApp e receba um orçamento para a sua piscina. Atendemos {site.regiao}.
         </p>
         <div className="mt-9 flex justify-center">
-          <Button
-            mensagem="Olá, PGW! Vim pelo site e quero um orçamento."
-            className="bg-navy text-white"
-          >
+          <Button variante="inversa" mensagem="Olá, PGW! Vim pelo site e quero um orçamento.">
             Falar com a PGW no WhatsApp
           </Button>
         </div>
