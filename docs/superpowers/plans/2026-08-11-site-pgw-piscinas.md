@@ -14,12 +14,12 @@ Estes valores valem para **todas** as tarefas. Copiados literalmente da spec.
 
 - **Paleta, exata:** navy `#0B2545`, turquesa `#17C3E0`, branco `#FFFFFF`, prata `#C9D6DF`. Nenhuma outra cor de marca.
 - **Tipografia:** Inter, via Google Fonts com `preconnect` e `display=swap`. Títulos 600/700, corpo 400.
-- **WhatsApp:** número `5519992715025`. Telefone exibido: `(19) 99271-5025`. Nunca escrever esse número como literal fora de `src/content/site.ts`.
+- **WhatsApp:** número `5519992715025`. Telefone exibido: `(19) 99271-5025`. Em **código de produção** o número existe apenas como `WHATSAPP_NUMERO` em `src/lib/whatsapp.ts`, lido a partir dali por `src/content/site.ts`; nenhum componente ou página pode conter o número como literal. **Arquivos de teste são exceção explícita:** eles pinam o valor esperado à mão, de propósito. Montar a URL esperada a partir da própria constante tornaria o teste tautológico — trocar `WHATSAPP_NUMERO` por um número errado continuaria passando, e o site inteiro apontaria para o telefone errado sem nenhum teste falhar.
 - **Tailwind v4:** paleta declarada em CSS via `@theme`. **Não** existe `tailwind.config.js` nem `postcss.config.js` neste projeto. Não rodar `npx tailwindcss init`, que foi removido na v4.
 - **React 19:** `<title>` e `<meta name="description">` são declarados no JSX de cada página e hasteados pelo React. Não criar hook de SEO nem manipular `document.head`.
 - **Reduced motion:** toda animação decorativa (Ken Burns, pulse, slide-up) deve ser desligada quando `prefers-reduced-motion: reduce` estiver ativo. Sempre via o hook `usePrefersReducedMotion`.
 - **Conteúdo proibido:** nenhum depoimento de cliente (não existem reais). Nenhum preço. Nenhuma menção a "abertura e fechamento sazonal".
-- **Idioma:** todo texto visível em português do Brasil. Código, nomes de arquivo e mensagens de commit também em português, sem acento nos identificadores.
+- **Idioma:** todo texto visível ao usuário em português do Brasil, com acentuação correta. Mensagens de commit em português, sem acento. No código a convenção é mista e deliberada: **nomes de componente, arquivo e hook em inglês** (`Hero`, `Gallery`, `TrustBadges`, `usePrefersReducedMotion`), seguindo a convenção do ecossistema React; **dados de domínio e variáveis locais em português sem acento** (`servicos`, `selos`, `comparacao`, `reduzido`, `indice`). Seguir exatamente os identificadores que aparecem no código de cada tarefa.
 - **Imagens:** as 4 fotos de origem são verticais. Nunca esticar nem fazer upscale acima da largura nativa (1200px para piscina1/2, 900px para piscina3/4).
 
 ---
@@ -376,6 +376,8 @@ Centraliza todo o texto e todo dado de negócio. Nenhum outro arquivo pode conte
 Escrever `src/content/site.ts`:
 
 ```ts
+import { WHATSAPP_NUMERO } from '../lib/whatsapp'
+
 export interface Servico {
   slug: string
   titulo: string
@@ -405,7 +407,8 @@ export interface Foto {
 export const site = {
   nome: 'PGW Piscinas',
   telefoneExibido: '(19) 99271-5025',
-  telefoneHref: 'tel:+5519992715025',
+  // Derivado da constante, e nao literal: o numero existe num lugar so.
+  telefoneHref: `tel:+${WHATSAPP_NUMERO}`,
   regiao: 'Campinas e região',
 
   servicos: [
@@ -540,7 +543,7 @@ git commit -m "Adiciona conteudo do site como fonte unica de verdade"
 
 **Interfaces:**
 - Consumes: os slugs e larguras nativas de `site.fotos` (Task 3)
-- Produces: para cada slug, os arquivos `public/images/<slug>-640.webp`, `-900.webp` e, quando a largura nativa permitir, `-1280.webp`. Consumidos pelas Tasks 7 e 8.
+- Produces: para cada slug, os arquivos `public/images/<slug>-640.webp`, `-900.webp` e, quando a largura nativa permitir, `-1200.webp`. Consumidos pelas Tasks 7 e 8.
 
 - [ ] **Step 1: Mover os JPGs de origem para fora da raiz**
 
@@ -560,7 +563,9 @@ import sharp from 'sharp'
 
 const ORIGEM = 'assets-origem'
 const SAIDA = 'public/images'
-const LARGURAS = [640, 900, 1280]
+// 1200 e a largura nativa de piscina1/piscina2. Um tier acima disso seria
+// descartado pela guarda anti-upscale e nunca geraria arquivo.
+const LARGURAS = [640, 900, 1200]
 
 // Os crops removem elementos que atrapalham a leitura da foto.
 // top/height sao em pixels da imagem original.
@@ -575,7 +580,7 @@ const FOTOS = [
     arquivo: 'piscina1.jpg',
     slug: 'piscina-azulejo-verde',
     larguraNativa: 1200,
-    crop: { left: 0, top: 430, width: 1200, height: 1170 }, // remove a capa azul no deck
+    crop: { left: 0, top: 540, width: 1200, height: 1060 }, // remove a capa azul no deck
   },
   {
     arquivo: 'piscina3.jpg',
@@ -721,7 +726,9 @@ O hero e a galeria servem os mesmos WebP em resoluções diferentes. A regra de 
 Escrever `src/lib/imagens.ts`:
 
 ```ts
-const LARGURAS = [640, 900, 1280]
+// Precisa espelhar LARGURAS de scripts/optimize-images.mjs: sao os
+// arquivos que existem em public/images.
+const LARGURAS = [640, 900, 1200]
 
 /** Monta o srcset de uma foto, sem oferecer largura acima da nativa. */
 export function srcSetDe(slug: string, larguraNativa: number): string {
@@ -779,14 +786,28 @@ interface Props {
   as?: 'whatsapp' | 'link'
   href?: string
   mensagem?: string
-  variante?: 'primaria' | 'secundaria'
+  variante?: 'primaria' | 'secundaria' | 'inversa'
   pulse?: boolean
   className?: string
 }
 
+// A sombra do hover precisa ser valor arbitrario. Em Tailwind v4 as duas
+// formas semanticas obvias falham: com modificador de opacidade nao gera
+// CSS nenhum, e sem ele so define --tw-shadow-color sem desenhar sombra.
+// Nao simplifique esta classe de volta. Underscores no lugar de espacos,
+// e a cor vem da variavel da paleta.
+//
+// O texto acima evita de proposito escrever a classe quebrada por extenso:
+// o scanner do Tailwind le o arquivo cru e nao distingue comentario de
+// codigo, entao mencionar a classe a regeneraria no bundle.
 const ESTILOS = {
-  primaria: 'bg-turquesa text-navy hover:shadow-turquesa/40',
+  primaria: 'bg-turquesa text-navy hover:shadow-[0_12px_34px_-10px_var(--color-turquesa)]',
   secundaria: 'border-2 border-white/40 text-white hover:border-turquesa hover:text-turquesa',
+  // Para secoes de fundo claro ou turquesa, onde a primaria sumiria.
+  // Precisa ser variante e nao className: o Tailwind resolve conflito de
+  // mesma especificidade pela ordem das regras no CSS compilado, entao
+  // passar uma cor de fundo por className nao sobrescreve a da variante.
+  inversa: 'bg-navy text-white hover:shadow-[0_12px_34px_-10px_var(--color-navy)]',
 } as const
 
 export function Button({
@@ -1078,14 +1099,22 @@ Escrever `src/components/layout/RootLayout.tsx`. Sem o `useEffect` de scroll, na
 
 ```tsx
 import { useEffect } from 'react'
-import { Outlet, useLocation } from 'react-router-dom'
+import { useLocation, useOutlet } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Header } from './Header'
 import { Footer } from './Footer'
 import { WhatsAppFab } from '../WhatsAppFab'
+import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion'
 
 export function RootLayout() {
   const location = useLocation()
+  // useOutlet e nao <Outlet />: o Outlet assina o contexto do router e
+  // re-renderiza com a rota nova na hora, por dentro do AnimatePresence.
+  // O conteudo trocaria em ~10ms e o fade de 200ms animaria uma div cujo
+  // conteudo ja mudou. Capturar o elemento aqui e o que faz a saida
+  // esperar de verdade.
+  const outlet = useOutlet()
+  const reduzido = usePrefersReducedMotion()
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -1101,9 +1130,9 @@ export function RootLayout() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            transition={{ duration: reduzido ? 0 : 0.2 }}
           >
-            <Outlet />
+            {outlet}
           </motion.div>
         </AnimatePresence>
       </main>
@@ -1341,8 +1370,11 @@ export function Hero() {
             }}
           />
         </AnimatePresence>
-        {/* Escurece a foto no mobile, onde o texto fica por cima dela */}
-        <div className="absolute inset-0 bg-gradient-to-t from-navy via-navy/70 to-navy/20 lg:hidden" />
+        {/* Escurece a foto no mobile, onde o texto fica por cima dela.
+            O valor do meio foi medido, nao escolhido: com mascara de glifo
+            sobre as 4 fotos, o valor mais claro reprovava em 1,4% e 2,0%
+            dos pixels de texto, por causa dos reflexos de sol na agua. */}
+        <div className="absolute inset-0 bg-gradient-to-t from-navy via-navy/80 to-navy/20 lg:hidden" />
       </div>
 
       {/* Coluna de texto */}
@@ -1431,7 +1463,13 @@ Abrir em 1280×800. Confirmar: coluna de texto à esquerda em navy e painel de f
 
 - [ ] **Step 4: Verificar o hero no mobile**
 
-Redimensionar para 375×812 e recarregar. Confirmar: a foto cobre a tela inteira, o gradiente escurece a base e o texto tem contraste legível **nas quatro fotos** — esperar dois ciclos completos e checar cada uma. Se alguma foto deixar o texto ilegível, escurecer o gradiente ajustando `via-navy/70` para `via-navy/80`.
+Redimensionar para 375×812 e recarregar. Confirmar: a foto cobre a tela inteira e o gradiente escurece a base.
+
+O contraste do texto **não pode ser aferido a olho nem por média de luminância na caixa do título** — a média dilui o resultado com margens, espaço entre letras e o vão entre as linhas. Medir com máscara de glifo: desenhar as duas linhas do título num canvas para obter a máscara de tinta, compor foto + gradiente num segundo canvas com a mesma geometria do `object-cover`, e calcular a razão de contraste WCAG apenas nos pixels de tinta. Critério: 5º percentil ≥ 4,5:1 e menos de 0,5% dos pixels de tinta abaixo de 4,5:1, **nas quatro fotos**.
+
+Medição já realizada: o valor `via-navy/70` reprovava (1,43% e 2,05% dos pixels de tinta abaixo do mínimo em `piscina-deck-spa` e `piscina-azulejo-verde`, por causa dos reflexos de sol na água). `via-navy/80` passa nas quatro e é o valor no código.
+
+Atenção ao medir: o proxy do painel de navegador corrompe `naturalWidth`/`naturalHeight` do `<img>` (reporta 375×500 no lugar de 900×1200). Obter os pixels reais via `fetch()` + `createImageBitmap()`.
 
 - [ ] **Step 5: Verificar o comportamento com movimento reduzido**
 
@@ -1478,7 +1516,7 @@ export function Comparison() {
 
       <div className="mt-14 grid gap-6 md:grid-cols-2">
         <Reveal className="rounded-2xl border border-prata bg-prata/20 p-8">
-          <h3 className="text-lg font-bold uppercase tracking-wide text-navy/50">Sem a PGW</h3>
+          <h3 className="text-lg font-bold uppercase tracking-wide text-navy/70">Sem a PGW</h3>
           <ul className="mt-6 space-y-5">
             {site.comparacao.map((par) => (
               <li key={par.sem} className="flex gap-3 text-navy/70">
@@ -1591,6 +1629,10 @@ import { Section } from '../ui/Section'
 export function TrustBadges() {
   return (
     <Section className="bg-navy text-white">
+      <Reveal className="mx-auto mb-12 max-w-2xl text-center">
+        <h2 className="text-3xl font-bold sm:text-4xl">Como a PGW trabalha</h2>
+      </Reveal>
+
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {site.selos.map((selo, i) => (
           <Reveal key={selo.titulo} delay={i * 0.08}>
@@ -1627,10 +1669,7 @@ export function FinalCta() {
           Chame no WhatsApp e receba um orçamento para a sua piscina. Atendemos {site.regiao}.
         </p>
         <div className="mt-9 flex justify-center">
-          <Button
-            mensagem="Olá, PGW! Vim pelo site e quero um orçamento."
-            className="bg-navy text-white"
-          >
+          <Button variante="inversa" mensagem="Olá, PGW! Vim pelo site e quero um orçamento.">
             Falar com a PGW no WhatsApp
           </Button>
         </div>
@@ -1797,13 +1836,15 @@ export default function Sobre() {
           </Reveal>
 
           <Reveal delay={0.12}>
-            <div className="rounded-2xl border-2 border-dashed border-turquesa bg-turquesa/5 p-8">
-              <p className="text-xs font-bold uppercase tracking-widest text-turquesa">
-                Pendente antes de publicar
-              </p>
-              <h2 className="mt-4 text-2xl font-bold">Quem está por trás da PGW</h2>
+            <div className="rounded-2xl border border-prata bg-prata/20 p-8">
+              <h2 className="text-2xl font-bold">Quem está por trás da PGW</h2>
               <p className="mt-4 text-navy/70">
-                [PLACEHOLDER: nomes dos sócios e fundadores. Preencher antes de publicar o site.]
+                Pedro, Gabriel e Wesley. As iniciais dos três amigos que fundaram a empresa são
+                o nome dela.
+              </p>
+              <p className="mt-4 text-navy/70">
+                É com eles que você fala no WhatsApp, e são eles que aparecem na sua casa no dia
+                combinado.
               </p>
             </div>
           </Reveal>
@@ -1883,7 +1924,7 @@ export default function Contato() {
               <h2 className="text-sm font-bold uppercase tracking-widest text-turquesa">Telefone</h2>
               <a
                 href={site.telefoneHref}
-                className="mt-2 block text-2xl font-bold hover:text-turquesa"
+                className="mt-2 block text-2xl font-bold underline-offset-4 hover:underline"
               >
                 {site.telefoneExibido}
               </a>
@@ -1916,7 +1957,7 @@ export default function Contato() {
               </label>
               <button
                 type="submit"
-                className="mt-7 w-full rounded-full bg-turquesa px-8 py-4 font-semibold text-navy transition-transform hover:scale-[1.02]"
+                className="mt-7 w-full rounded-full bg-navy px-8 py-4 font-semibold text-white transition-transform hover:scale-[1.02]"
               >
                 Abrir conversa no WhatsApp
               </button>
