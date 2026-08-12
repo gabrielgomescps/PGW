@@ -1,32 +1,39 @@
-# React + TypeScript + Vite
+# PGW Piscinas
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Site institucional da PGW Piscinas — limpeza e manutenção de piscinas em Campinas e região.
 
-Currently, two official plugins are available:
+## Rodar localmente
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+npm install
+npm run dev
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## Comandos
+
+| Comando | O que faz |
+|---|---|
+| `npm run dev` | Sobe o servidor de desenvolvimento |
+| `npm run build` | Gera o build de produção em `dist/` |
+| `npm test` | Roda os testes do Vitest |
+| `npm run images` | Regera os WebP e o `og.jpg` a partir de `assets-origem/` |
+
+## Onde mexer no conteúdo
+
+Telefone, serviços, selos, diferenciais e textos da comparação estão todos em
+`src/content/site.ts`. **O número de WhatsApp existe apenas ali** — não repita
+o número em nenhum outro arquivo.
+
+## Pendências antes de publicar
+
+- Preencher os nomes dos sócios em `src/pages/Sobre.tsx` (há um bloco marcado
+  visivelmente na página)
+- Trocar `pgwpiscinas.com.br` pelo domínio real em `public/robots.txt` e
+  `public/sitemap.xml`, e usar URL absoluta em `og:image` no `index.html`
+- Corrigir a grafia `MANUTENÇÃÓ` na arte impressa da logo (não afeta o site)
+
+## Deploy
+
+Vercel, build Vite padrão. O `vercel.json` reescreve todas as rotas para
+`index.html`, o que é necessário para o roteamento client-side funcionar em
+links diretos.
