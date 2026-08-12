@@ -32,14 +32,36 @@ tags `og:image` / `og:url` em `index.html`. As tags Open Graph exigem URL
 absoluta — o crawler do WhatsApp não resolve caminho relativo, e sem elas um
 link colado em grupo aparece sem imagem.
 
+## Lighthouse
+
+Medido no build de produção servido por `vite preview`, com o Microsoft Edge em
+modo headless:
+
+| Perfil | Performance | Acessibilidade | Best Practices | SEO |
+|---|---|---|---|---|
+| Mobile | 92 | 100 | 100 | 100 |
+| Desktop | 99 | 100 | 100 | 100 |
+
+No mobile: LCP 2,8 s, FCP 2,5 s, TBT 0 ms, CLS 0,001, nenhuma auditoria
+reprovada. A única oportunidade restante é ~150 ms de JavaScript não usado — o
+`framer-motion` vem num chunk único. Se algum dia isso incomodar, o caminho é
+code-splitting por rota.
+
+Para repetir a medição:
+
+```bash
+npm run build
+npx vite preview --port 4173
+CHROME_PATH="/c/Program Files (x86)/Microsoft/Edge/Application/msedge.exe" npx lighthouse@12 http://localhost:4173/ --chrome-flags="--headless=new"
+```
+
 ## Pendências antes de publicar
 
-- **Rodar o Lighthouse.** A meta é 90+ em Performance, Acessibilidade, Best
-  Practices e SEO, e ela nunca foi medida — a máquina onde o site foi construído
-  não tinha Chrome instalado.
 - **Conferir as animações num navegador real.** O crossfade e o Ken Burns do
-  hero, o pulse do botão, a transição de 200ms entre páginas e o menu mobile a
-  375px foram verificados por configuração no código, não observados rodando.
+  hero, o pulse do botão, a transição de 200 ms entre páginas e o menu mobile a
+  375 px foram verificados por configuração no código e por medição estática,
+  não observados rodando — o ambiente onde o site foi construído não compunha
+  frames.
 - Corrigir a grafia `MANUTENÇÃÓ` na arte impressa da logo (não afeta o site,
   que não usa a arte original)
 
