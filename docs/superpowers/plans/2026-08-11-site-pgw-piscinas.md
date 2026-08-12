@@ -1365,8 +1365,11 @@ export function Hero() {
             }}
           />
         </AnimatePresence>
-        {/* Escurece a foto no mobile, onde o texto fica por cima dela */}
-        <div className="absolute inset-0 bg-gradient-to-t from-navy via-navy/70 to-navy/20 lg:hidden" />
+        {/* Escurece a foto no mobile, onde o texto fica por cima dela.
+            O valor do meio foi medido, nao escolhido: com mascara de glifo
+            sobre as 4 fotos, o valor mais claro reprovava em 1,4% e 2,0%
+            dos pixels de texto, por causa dos reflexos de sol na agua. */}
+        <div className="absolute inset-0 bg-gradient-to-t from-navy via-navy/80 to-navy/20 lg:hidden" />
       </div>
 
       {/* Coluna de texto */}
@@ -1455,7 +1458,13 @@ Abrir em 1280×800. Confirmar: coluna de texto à esquerda em navy e painel de f
 
 - [ ] **Step 4: Verificar o hero no mobile**
 
-Redimensionar para 375×812 e recarregar. Confirmar: a foto cobre a tela inteira, o gradiente escurece a base e o texto tem contraste legível **nas quatro fotos** — esperar dois ciclos completos e checar cada uma. Se alguma foto deixar o texto ilegível, escurecer o gradiente ajustando `via-navy/70` para `via-navy/80`.
+Redimensionar para 375×812 e recarregar. Confirmar: a foto cobre a tela inteira e o gradiente escurece a base.
+
+O contraste do texto **não pode ser aferido a olho nem por média de luminância na caixa do título** — a média dilui o resultado com margens, espaço entre letras e o vão entre as linhas. Medir com máscara de glifo: desenhar as duas linhas do título num canvas para obter a máscara de tinta, compor foto + gradiente num segundo canvas com a mesma geometria do `object-cover`, e calcular a razão de contraste WCAG apenas nos pixels de tinta. Critério: 5º percentil ≥ 4,5:1 e menos de 0,5% dos pixels de tinta abaixo de 4,5:1, **nas quatro fotos**.
+
+Medição já realizada: o valor `via-navy/70` reprovava (1,43% e 2,05% dos pixels de tinta abaixo do mínimo em `piscina-deck-spa` e `piscina-azulejo-verde`, por causa dos reflexos de sol na água). `via-navy/80` passa nas quatro e é o valor no código.
+
+Atenção ao medir: o proxy do painel de navegador corrompe `naturalWidth`/`naturalHeight` do `<img>` (reporta 375×500 no lugar de 900×1200). Obter os pixels reais via `fetch()` + `createImageBitmap()`.
 
 - [ ] **Step 5: Verificar o comportamento com movimento reduzido**
 
