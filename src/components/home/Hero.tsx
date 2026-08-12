@@ -50,7 +50,7 @@ export function Hero() {
           />
         </AnimatePresence>
         {/* Escurece a foto no mobile, onde o texto fica por cima dela */}
-        <div className="absolute inset-0 bg-gradient-to-t from-navy via-navy/70 to-navy/20 lg:hidden" />
+        <div className="absolute inset-0 bg-gradient-to-t from-navy via-navy/80 to-navy/20 lg:hidden" />
       </div>
 
       {/* Coluna de texto */}
