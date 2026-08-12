@@ -1836,13 +1836,15 @@ export default function Sobre() {
           </Reveal>
 
           <Reveal delay={0.12}>
-            <div className="rounded-2xl border-2 border-dashed border-turquesa bg-turquesa/5 p-8">
-              <p className="text-xs font-bold uppercase tracking-widest text-turquesa">
-                Pendente antes de publicar
-              </p>
-              <h2 className="mt-4 text-2xl font-bold">Quem está por trás da PGW</h2>
+            <div className="rounded-2xl border border-prata bg-prata/20 p-8">
+              <h2 className="text-2xl font-bold">Quem está por trás da PGW</h2>
               <p className="mt-4 text-navy/70">
-                [PLACEHOLDER: nomes dos sócios e fundadores. Preencher antes de publicar o site.]
+                Pedro, Gabriel e Wesley. As iniciais dos três amigos que fundaram a empresa são
+                o nome dela.
+              </p>
+              <p className="mt-4 text-navy/70">
+                É com eles que você fala no WhatsApp, e são eles que aparecem na sua casa no dia
+                combinado.
               </p>
             </div>
           </Reveal>

@@ -210,7 +210,7 @@ Escopo proporcional a um site institucional de 4 páginas.
 
 ## Pendências antes de publicar
 
-1. **Nomes dos sócios** — placeholder visível na página Sobre, a ser preenchido pelo Gabriel
+1. ~~**Nomes dos sócios**~~ — resolvido: Pedro, Gabriel e Wesley. As iniciais dos três fundadores são o nome da empresa, e a página Sobre passou a dizer isso. O placeholder visível foi removido.
 2. **Erro de grafia na logo impressa** — `MANUTENÇÃÓ` deve virar `MANUTENÇÃO` antes de ir para uniforme e cartão. Não afeta o site, que não usa a arte original.
 3. **Depoimentos** — adicionar seção somente quando existirem depoimentos reais de clientes
 
