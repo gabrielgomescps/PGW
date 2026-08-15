@@ -39,13 +39,17 @@ modo headless:
 
 | Perfil | Performance | Acessibilidade | Best Practices | SEO |
 |---|---|---|---|---|
-| Mobile | 92 | 100 | 100 | 100 |
+| Mobile | 90 | 100 | 100 | 100 |
 | Desktop | 99 | 100 | 100 | 100 |
 
-No mobile: LCP 2,8 s, FCP 2,5 s, TBT 0 ms, CLS 0,001, nenhuma auditoria
-reprovada. A única oportunidade restante é ~150 ms de JavaScript não usado — o
-`framer-motion` vem num chunk único. Se algum dia isso incomodar, o caminho é
-code-splitting por rota.
+No mobile: LCP 3,1 s, FCP 2,5 s, TBT 10 ms, CLS 0,001, nenhuma auditoria
+reprovada.
+
+**O gargalo do LCP é JavaScript, não imagem.** A decomposição do Lighthouse dá
+TTFB 454 ms, tempo de download da imagem 0 ms (o preload funciona) e *render
+delay* de 2.667 ms — o tempo até o React montar, atrás de um bundle único de
+432 kB. O caminho para subir dessa faixa é code-splitting, não otimizar mais as
+fotos.
 
 Para repetir a medição:
 

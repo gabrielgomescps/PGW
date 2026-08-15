@@ -96,9 +96,19 @@ D:\Claude\PGW\
 
 O elemento central do projeto.
 
-**Desktop (≥1024px):** grid de 2 colunas. Coluna esquerda em navy `#0B2545` com o conteúdo textual; coluna direita é um painel de foto vertical ocupando 100% da altura do hero, com `overflow: hidden`. As fotos aparecem em proporção próxima da nativa — sem upscale e sem cortar a água.
+**Full-bleed em todas as larguras**, com o texto sobreposto à foto. A seção usa `100svh` no mobile e `100svh` menos a altura do header no desktop.
 
-**Mobile (<1024px):** full-bleed conforme o brief — foto vertical cobrindo a viewport em `100svh`, overlay em gradiente navy de baixo para cima garantindo contraste, texto sobreposto. É o formato nativo das fotos e a origem da maioria dos leads.
+*Esta seção foi reescrita depois de o hero ir ao ar. O design original era split — texto numa coluna à esquerda, painel de foto vertical à direita — para exibir as fotos verticais sem upscale. **Não funcionou, e a medição mostrou por quê:** a frase mais longa da manchete precisa de 964px a 60px, e a coluna de 50% oferecia 518px numa tela de notebook. O título quebrava em 5 linhas em vez de 2. Para caber em 2 linhas no split, a fonte teria de cair para 30px, o que anula o hero. O split só funcionaria acima de ~1950px de viewport.*
+
+*A objeção original ao full-bleed — perder nitidez — se mostrou menos importante do que parecia: a foto do hero fica atrás de um gradiente escuro com texto por cima, contexto em que suavidade é quase invisível, muito diferente da galeria.*
+
+**Recortes dedicados.** O pipeline gera uma variante `hero` em proporção 3:2, com o enquadramento escolhido foto a foto (mirando a água, fugindo da capa azul, dos carros dos vizinhos e do flare). Deixar o `object-cover` recortar em tempo de render escolheria a faixa central às cegas.
+
+**Escala tipográfica medida, não estimada.** A frase mais longa exige 579px a 36px, 771px a 48px e 964px a 60px. Cada degrau só sobe quando a largura útil do container comporta a frase numa linha: 36px no mobile, 48px a partir de `lg`, 60px a partir de `xl`.
+
+**Gradientes distintos por breakpoint, ambos medidos com máscara de glifo sobre as 4 fotos.** No mobile o texto ocupa a largura toda, então uma camada horizontal não ajudaria e a vertical precisa ser mais forte — mínimo medido de 4,47:1. No desktop o texto fica à esquerda, então uma camada horizontal carrega o contraste e a vertical pode ser leve — mínimo de 5,41:1. Escurecer além disso apenas esconde a foto sem ganho de legibilidade.
+
+**Exceção à regra de upscale.** O hero é a única saída que amplia acima da largura nativa, até 1600px, com `lanczos3` e um sharpen leve. A regra existe para a galeria, onde a foto aparece nítida e pequena. Num fundo full-bleed de 1920px o upscale acontece de qualquer forma: recusar no pipeline apenas transfere o trabalho para o navegador, que usa um filtro pior.
 *`svh` e não `vh`: no mobile a barra do navegador aparece e some durante o scroll, e `100vh` faz o hero saltar de altura quando isso acontece.*
 
 **Animação:**
