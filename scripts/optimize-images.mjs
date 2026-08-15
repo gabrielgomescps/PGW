@@ -36,7 +36,48 @@ const FOTOS = [
   },
 ]
 
+// O hero e full-bleed e paisagem, mas as 4 fontes sao verticais de celular.
+// Deixar o object-cover recortar na hora escolheria a faixa central as cegas;
+// aqui o recorte e deliberado, mirando a agua e fugindo do que atrapalha
+// (capa azul, carros dos vizinhos, flare de sol). Proporcao 3:2, que perde
+// menos altura que 16:9 e ainda cobre a maioria das telas.
+const HERO_PROPORCAO = 3 / 2
+const HERO_TOPO = {
+  'piscina-deck-spa': 480,
+  'piscina-azulejo-verde': 620,
+  'piscina-jardim': 420,
+  'piscina-condominio': 470,
+}
+
+// O hero e a unica saida que faz upscale, e de proposito. A regra de nunca
+// passar da largura nativa existe para a galeria, onde a foto aparece nitida
+// e pequena. Num hero full-bleed de 1920px o upscale acontece de qualquer
+// jeito: recusar aqui so transfere o trabalho para o navegador, que usa um
+// filtro mais grosseiro. Fazer com lanczos3 e um sharpen leve entrega melhor
+// resultado com a mesma informacao. Teto de 1600 para nao inflar o LCP.
+const HERO_LARGURAS = [640, 900, 1200, 1600]
+
 await mkdir(SAIDA, { recursive: true })
+
+for (const foto of FOTOS) {
+  const alturaHero = Math.round(foto.larguraNativa / HERO_PROPORCAO)
+  const topo = HERO_TOPO[foto.slug]
+
+  for (const largura of HERO_LARGURAS) {
+    const ampliando = largura > foto.larguraNativa
+
+    let p = sharp(`${ORIGEM}/${foto.arquivo}`)
+      .extract({ left: 0, top: topo, width: foto.larguraNativa, height: alturaHero })
+      .resize({ width: largura, kernel: 'lanczos3' })
+
+    // Ampliacao borra; um sharpen leve devolve definicao sem virar artefato.
+    if (ampliando) p = p.sharpen({ sigma: 0.8 })
+
+    await p.webp({ quality: 82 }).toFile(`${SAIDA}/${foto.slug}-hero-${largura}.webp`)
+
+    console.log(`gerado ${foto.slug}-hero-${largura}.webp${ampliando ? ' (ampliado)' : ''}`)
+  }
+}
 
 for (const foto of FOTOS) {
   for (const largura of LARGURAS) {
